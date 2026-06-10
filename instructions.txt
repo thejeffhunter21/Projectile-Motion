@@ -1,0 +1,26 @@
+=== WORKFLOW ===
+
+--- Starting a session ---
+1. git pull
+
+--- Mac: Before compiling ---
+1. source ~/emsdk/emsdk_env.sh
+
+--- Windows: Before compiling (Git Bash only) ---
+1. source ~/emsdk/emsdk_env.sh
+
+--- If you changed .cpp or .h files, recompile ---
+1. emcc projectile.cpp -o projectile.js \
+  -s EXPORTED_FUNCTIONS='["_launch","_update","_getX","_getY","_isActive"]' \
+  -s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' \
+  -s MODULARIZE=1 \
+  -s EXPORT_NAME="ProjectileModule"
+
+--- Testing in browser ---
+1. python3 -m http.server 8000
+2. open http://localhost:8000
+
+--- Saving to GitHub ---
+1. git add .
+2. git commit -m "commit message"
+3. git push

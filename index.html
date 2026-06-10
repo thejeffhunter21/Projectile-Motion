@@ -20,7 +20,7 @@
     <span id="speedVal">12</span> m/s
 
     <br>
-    Height: <input type="range" id="height" min="0" max = "30" value = "0">
+    Height: <input type="range" id="height" min="0" max = "20" value = "0">
     <span id="heightVal"> 0 </span> m
 
     <br>
@@ -29,8 +29,7 @@
     <script src="projectile.js"></script>
     <script>
         ProjectileModule().then(function(Module) { //loading module for .wasm
-            const OFFSET_X = 50;  // pixels from left edge
-
+            const OFFSET_X = 100;  // pixels from left edge
             const canvas = document.getElementById('canvas'); //canvas setup
             const ctx = canvas.getContext('2d');
             document.getElementById('angle').addEventListener('input', e => { //slider
@@ -41,13 +40,20 @@
             });
             document.getElementById('height').addEventListener('input', e=> {
                 document.getElementById('heightVal').textContent = e.target.value;
+                drawScene();
             });
+            let animationId = null;
             document.getElementById('launch').addEventListener('click', () => { //launch lable
                 const angle = Number(document.getElementById('angle').value);
                 const speed = Number(document.getElementById('speed').value);
                 const height = Number(document.getElementById('height').value);
+
+                if (animationId) {
+                    cancelAnimationFrame(animationId);  // stop any existing loop
+                }
+
                 Module._launch(angle, speed, height);
-                requestAnimationFrame(loop);
+                animationId = requestAnimationFrame(loop);
             });
             function loop() {
                 const SCALE = 16;  // 1 meter = 8 pixels
@@ -56,13 +62,33 @@
                 const y = Module._getY();
 
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawScene();    
                 ctx.beginPath();
-                ctx.arc(x * SCALE, canvas.height -(y*SCALE), 10, 0, Math.PI * 2);
+                ctx.arc(x * SCALE + OFFSET_X, canvas.height -(y*SCALE), 10, 0, Math.PI * 2);
                 ctx.fill();
 
                 if (Module._isActive()) {
-                    requestAnimationFrame(loop);
+                    animationId = requestAnimationFrame(loop);
+                } else{
+                    animationId=null;
                 }
+            }
+            function drawScene() {
+                const height = Number(document.getElementById('height').value);
+                const SCALE = 16;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // draw the height block
+                ctx.fillStyle = 'brown';
+                ctx.fillRect(OFFSET_X - 20, canvas.height - (height * SCALE), 20, height * SCALE);
+
+                // draw dimension text
+                ctx.fillStyle = 'black';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'right';
+                ctx.fillText(height + ' m', OFFSET_X - 25, canvas.height - (height * SCALE) / 2);
+                ctx.textAlign = 'left';
             }
         });
     </script>
