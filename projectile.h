@@ -14,7 +14,7 @@ const float grav = 9.8f;
 
 // function declarations
 extern "C" {
-void launch(float angleDeg, float speed);
+void launch(float angleDeg, float speed, float height);
 void update(float dt);
 float getX();
 float getY();

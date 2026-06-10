@@ -7,10 +7,10 @@ Projectile proj; //Create projectile instance
 
 extern "C" {
 EMSCRIPTEN_KEEPALIVE
-void launch(float angleDeg, float speed) { //Convert radians to degrees so we can use sin/cos
+void launch(float angleDeg, float speed, float height) { //Convert radians to degrees so we can use sin/cos
     float angleRad = angleDeg * (M_PI / 180.0f);
     proj.x = 0;
-    proj.y = 0;
+    proj.y = height;
     proj.vx = speed * cos(angleRad); //speed along x axis
     proj.vy = speed * sin(angleRad); //speed along y axis
     proj.active = true; //let us know if it is in motion

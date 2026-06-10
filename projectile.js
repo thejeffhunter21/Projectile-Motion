@@ -1554,7 +1554,7 @@ function assignWasmExports(wasmExports) {
   assert(typeof wasmExports['emscripten_stack_get_current'] != 'undefined', 'missing Wasm export: emscripten_stack_get_current');
   assert(typeof wasmExports['memory'] != 'undefined', 'missing Wasm export: memory');
   assert(typeof wasmExports['__indirect_function_table'] != 'undefined', 'missing Wasm export: __indirect_function_table');
-  _launch = Module['_launch'] = createExportWrapper('launch', 2);
+  _launch = Module['_launch'] = createExportWrapper('launch', 3);
   _update = Module['_update'] = createExportWrapper('update', 1);
   _getX = Module['_getX'] = createExportWrapper('getX', 0);
   _getY = Module['_getY'] = createExportWrapper('getY', 0);
