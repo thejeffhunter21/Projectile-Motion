@@ -1,5 +1,5 @@
 #include "projectile.h"
-#define EMSCRIPTEN_KEEPALIVE __attribute__((used))
+#define EMSCRIPTEN_KEEPALIVE __attribute__((used)) //used for git
 #include <iostream>
 
 Projectile proj; //Create projectile instance
@@ -39,3 +39,7 @@ float getY() { return proj.y; }
 EMSCRIPTEN_KEEPALIVE
 bool isActive() { return proj.active; } //getter for boolean
 }
+EMSCRIPTEN_KEEPALIVE
+float getVx() { return proj.vx; }
+EMSCRIPTEN_KEEPALIVE
+float getVy() { return proj.vy; }

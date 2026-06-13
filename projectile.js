@@ -1526,6 +1526,8 @@ var _update = Module['_update'] = makeInvalidEarlyAccess('_update');
 var _getX = Module['_getX'] = makeInvalidEarlyAccess('_getX');
 var _getY = Module['_getY'] = makeInvalidEarlyAccess('_getY');
 var _isActive = Module['_isActive'] = makeInvalidEarlyAccess('_isActive');
+var _getVx = Module['_getVx'] = makeInvalidEarlyAccess('_getVx');
+var _getVy = Module['_getVy'] = makeInvalidEarlyAccess('_getVy');
 var _fflush = makeInvalidEarlyAccess('_fflush');
 var _emscripten_stack_init = makeInvalidEarlyAccess('_emscripten_stack_init');
 var _emscripten_stack_get_free = makeInvalidEarlyAccess('_emscripten_stack_get_free');
@@ -1544,6 +1546,8 @@ function assignWasmExports(wasmExports) {
   assert(typeof wasmExports['getX'] != 'undefined', 'missing Wasm export: getX');
   assert(typeof wasmExports['getY'] != 'undefined', 'missing Wasm export: getY');
   assert(typeof wasmExports['isActive'] != 'undefined', 'missing Wasm export: isActive');
+  assert(typeof wasmExports['getVx'] != 'undefined', 'missing Wasm export: getVx');
+  assert(typeof wasmExports['getVy'] != 'undefined', 'missing Wasm export: getVy');
   assert(typeof wasmExports['fflush'] != 'undefined', 'missing Wasm export: fflush');
   assert(typeof wasmExports['emscripten_stack_init'] != 'undefined', 'missing Wasm export: emscripten_stack_init');
   assert(typeof wasmExports['emscripten_stack_get_free'] != 'undefined', 'missing Wasm export: emscripten_stack_get_free');
@@ -1559,6 +1563,8 @@ function assignWasmExports(wasmExports) {
   _getX = Module['_getX'] = createExportWrapper('getX', 0);
   _getY = Module['_getY'] = createExportWrapper('getY', 0);
   _isActive = Module['_isActive'] = createExportWrapper('isActive', 0);
+  _getVx = Module['_getVx'] = createExportWrapper('getVx', 0);
+  _getVy = Module['_getVy'] = createExportWrapper('getVy', 0);
   _fflush = createExportWrapper('fflush', 1);
   _emscripten_stack_init = wasmExports['emscripten_stack_init'];
   _emscripten_stack_get_free = wasmExports['emscripten_stack_get_free'];

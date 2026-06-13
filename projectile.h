@@ -19,4 +19,6 @@ void update(float dt);
 float getX();
 float getY();
 bool isActive();
+float getVx();
+float getVy();
 }

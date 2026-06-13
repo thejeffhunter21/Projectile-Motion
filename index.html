@@ -22,6 +22,9 @@
     <br>
     Height: <input type="range" id="height" min="0" max = "20" value = "0">
     <span id="heightVal"> 0 </span> m
+    <br>
+    <label><input type="checkbox" id="showComponents" checked> Component Vectors (Vx, Vy, Mg)</label>
+    <label><input type="checkbox" id="showResultant" checked> Resultant Vector (V)</label>
 
     <br>
     <button id="launch">Launch</button>
@@ -38,8 +41,9 @@
             document.getElementById('speed').addEventListener('input', e => { //slider
                 document.getElementById('speedVal').textContent = e.target.value;
             });
-            document.getElementById('height').addEventListener('input', e=> {
+            document.getElementById('height').addEventListener('input', e=> { //slider
                 document.getElementById('heightVal').textContent = e.target.value;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
                 drawScene();
             });
             let animationId = null;
@@ -57,27 +61,62 @@
             });
             function loop() {
                 const SCALE = 16;  // 1 meter = 8 pixels
-                Module._update(0.016);  // ~60fps timestep
                 const x = Module._getX();
                 const y = Module._getY();
-
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                drawScene();    
+                const vx = Module._getVx();
+                const vy = Module._getVy();
+                const VECTOR_SCALE = 18; // scale vectors so they're visible
+                const ballX = x * SCALE + OFFSET_X; //current ball position in pixels
+                const ballY = canvas.height - (y * SCALE); //current ball position, Y flipped for canvas
+                const showComponents = document.getElementById('showComponents').checked; //used for the checkboxes
+                const showResultant = document.getElementById('showResultant').checked; //used for the checkboxes
+                ctx.clearRect(0, 0, canvas.width, canvas.height); //clear all drawings
+                drawScene(); 
                 ctx.beginPath();
-                ctx.arc(x * SCALE + OFFSET_X, canvas.height -(y*SCALE), 10, 0, Math.PI * 2);
+                ctx.arc(x * SCALE + OFFSET_X, canvas.height -(y*SCALE), 15, 0, Math.PI * 2); //draw the circle
                 ctx.fill();
+                //for the vector components, its arrow size will change based on speed. variable size is not hardcoded, and is based off of the values of Vx and Vy
+                if (showResultant) {
+                    drawArrow(ballX, ballY, ballX + vx * VECTOR_SCALE, ballY - vy * VECTOR_SCALE, 'blue');
+                    ctx.fillStyle = 'blue';
+                    ctx.font = '14px Arial';
+                    ctx.fillText('V', ballX + vx * VECTOR_SCALE + 5, ballY - vy * VECTOR_SCALE - 5);
+                }
 
+                if (showComponents) {
+                    drawArrow(ballX, ballY, ballX + vx * VECTOR_SCALE, ballY, 'green');
+                    ctx.fillStyle = 'green';
+                    ctx.fillText('Vx', ballX + vx * VECTOR_SCALE + 5, ballY - 5);
+
+                    drawArrow(ballX, ballY, ballX, ballY - vy * VECTOR_SCALE, 'red');
+                    ctx.fillStyle = 'red';
+                    ctx.fillText('Vy', ballX + 5, ballY - vy * VECTOR_SCALE - 5);
+
+                    drawArrow(ballX, ballY, ballX, ballY + 50, 'orange');
+                    ctx.fillStyle = 'orange';
+                    ctx.fillText('Mg', ballX + 5, ballY + 55);
+                }
+
+                //counters in top right for further visualization
+                const speed = Math.sqrt(vx * vx + vy * vy);
+                ctx.fillStyle = 'black';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'right';
+                ctx.fillText('V:  ' + speed.toFixed(2) + ' m/s',  canvas.width - 20, 30);
+                ctx.fillText('Vx: ' + Math.abs(vx).toFixed(2) + ' m/s', canvas.width - 20, 50);
+                ctx.fillText('Vy: ' + vy.toFixed(2) + ' m/s',  canvas.width - 20, 70);
+                ctx.fillText('Mg: ' + (9.8).toFixed(2) + ' m/s²', canvas.width - 20, 90);
+                ctx.textAlign = 'left';
+                Module._update(0.008);  // small timestep for smoother physic
                 if (Module._isActive()) {
-                    animationId = requestAnimationFrame(loop);
+                    animationId = requestAnimationFrame(loop); //calls the loop
                 } else{
-                    animationId=null;
+                    animationId=null; //cancels when it hits the ground
                 }
             }
             function drawScene() {
                 const height = Number(document.getElementById('height').value);
                 const SCALE = 16;
-
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
 
                 // draw the height block
                 ctx.fillStyle = 'brown';
@@ -89,6 +128,27 @@
                 ctx.textAlign = 'right';
                 ctx.fillText(height + ' m', OFFSET_X - 25, canvas.height - (height * SCALE) / 2);
                 ctx.textAlign = 'left';
+            }
+            function drawArrow(fromX, fromY, toX, toY, color) {
+                const headLength = 10;
+                const angle = Math.atan2(toY - fromY, toX - fromX);
+
+                // draw the line
+                ctx.beginPath();
+                ctx.moveTo(fromX, fromY);
+                ctx.lineTo(toX, toY);
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // draw the arrowhead
+                ctx.beginPath();
+                ctx.moveTo(toX, toY);
+                ctx.lineTo(toX - headLength * Math.cos(angle - Math.PI / 6), toY - headLength * Math.sin(angle - Math.PI / 6));
+                ctx.lineTo(toX - headLength * Math.cos(angle + Math.PI / 6), toY - headLength * Math.sin(angle + Math.PI / 6));
+                ctx.closePath();
+                ctx.fillStyle = color;
+                ctx.fill();
             }
         });
     </script>
